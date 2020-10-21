@@ -1,27 +1,10 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * This file contains functions used by the outline reports
  *
- * @package    report
- * @subpackage up1teacherstats
- * @copyright  2012-2014 Silecs {@link http://www.silecs.info}
+ * @package    report_up1teacherstats
+ * @copyright  2012-2020 Silecs {@link http://www.silecs.info}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * derived from package report_outline
  */
 
 defined('MOODLE_INTERNAL') || die;
@@ -100,7 +83,8 @@ function teacherstats_resources_top($crsid, $limit) {
     $res = array();
 
     $components = array('mod_book', 'mod_folder', 'mod_page', 'mod_resource', 'mod_url');
-    $sql = "SELECT CONCAT(component, contextinstanceid), COUNT(id) AS cnt, component, contextinstanceid FROM {logstore_standard_log} "
+    $sql = "SELECT CONCAT(component, contextinstanceid), COUNT(id) AS cnt, component, contextinstanceid "
+         . "FROM {logstore_standard_log} "
          . "WHERE courseid=? AND action like 'view%' AND component IN ('" . implode("','", $components) . "') "
          . "GROUP BY component, contextinstanceid ORDER BY cnt DESC LIMIT " . $limit;
     $logtop = $DB->get_records_sql($sql, array($crsid));
@@ -127,7 +111,6 @@ function teacherstats_assignments($crsid) {
     global $DB;
     $res = array('global' => null, 'groups' => null);
 
-    // $sql = "SELECT a.id, a.name, FROM_UNIXTIME(a.duedate) AS due, SUM(IF(ass.status = 'submitted', 1, 0)) AS cntas, COUNT(DISTINCT ag.id) AS cntag "
     $sql = "SELECT a.id, a.name, FROM_UNIXTIME(a.duedate) AS due, "
            . "COUNT(DISTINCT ass.id) AS cntas, COUNT(DISTINCT ag.id) AS cntag "
          . "FROM {assign} a "
